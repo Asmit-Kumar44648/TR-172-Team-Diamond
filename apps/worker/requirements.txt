@@ -1,0 +1,14 @@
+modal==0.62.94
+torch==2.2.0
+torchvision
+open3d==0.18.0
+numpy
+scipy
+networkx
+ripser
+opencv-python-headless
+anthropic
+pybullet
+fastapi
+supabase
+pytest

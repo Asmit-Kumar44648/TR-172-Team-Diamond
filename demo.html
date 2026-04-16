@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRASP — Grasp Reliability & Safety Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0a0c10;
+      --surface:  #111318;
+      --surface2: #191d26;
+      --border:   #22273a;
+      --accent:   #6c63ff;
+      --accent2:  #00d4ff;
+      --green:    #00e676;
+      --red:      #ff453a;
+      --yellow:   #ffd60a;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --radius:   12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background glow ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 20% 20%, rgba(108,99,255,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 80% 70%, rgba(0,212,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    main { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 32px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; font-size: 18px; font-weight: 800; color: #fff;
+    }
+    .logo h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+    .logo span { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+    .status-pill {
+      font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px;
+      background: rgba(0,230,118,0.12); border: 1px solid rgba(0,230,118,0.3); color: var(--green);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .status-pill::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+    /* ── Grid layout ── */
+    .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .card-title {
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 32px 20px; text-align: center; cursor: pointer;
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+      background: rgba(255,255,255,0.01);
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent); background: rgba(108,99,255,0.07);
+    }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-icon { font-size: 36px; margin-bottom: 12px; }
+    .upload-zone p { font-size: 13px; color: var(--muted); }
+    .upload-zone strong { color: var(--accent); }
+    .file-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 6px; padding: 6px 12px; margin-top: 10px;
+      font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--accent);
+    }
+
+    /* ── Form fields ── */
+    .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input[type=number] {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--text);
+      font-family: 'JetBrains Mono', monospace; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--accent); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8b80ff);
+      color: #fff; box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+      width: 100%; justify-content: center; margin-top: 16px;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108,99,255,0.45); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      font-size: 12px; padding: 8px 14px; border-radius: 8px;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── SSE Terminal ── */
+    .terminal {
+      background: #0d0f14; border-radius: 10px; padding: 16px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      min-height: 200px; max-height: 380px; overflow-y: auto;
+      border: 1px solid var(--border); line-height: 1.8;
+    }
+    .terminal::-webkit-scrollbar { width: 4px; }
+    .terminal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .log-line { display: flex; gap: 10px; padding: 1px 0; }
+    .log-time { color: var(--muted); flex-shrink: 0; }
+    .log-info { color: var(--accent2); }
+    .log-success { color: var(--green); }
+    .log-warn { color: var(--yellow); }
+    .log-error { color: var(--red); }
+    .log-agent { color: #c084fc; }
+
+    /* ── Progress bar ── */
+    .progress-wrap { margin: 12px 0; }
+    .progress-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .progress-bar {
+      height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.4s ease; width: 0%;
+    }
+
+    /* ── Stage chips ── */
+    .stages { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+    .stage-chip {
+      font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+      border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    .stage-chip.done { background: rgba(0,230,118,0.1); border-color: rgba(0,230,118,0.4); color: var(--green); }
+    .stage-chip.active { background: rgba(108,99,255,0.15); border-color: rgba(108,99,255,0.5); color: var(--accent); animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    /* ── Grasp results grid ── */
+    .results-section { margin-top: 20px; display: none; }
+    .results-section.show { display: block; }
+    .grasps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .grasp-card {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; position: relative; transition: all 0.2s ease;
+    }
+    .grasp-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .grasp-card.rejected { border-color: rgba(255,69,58,0.4); background: rgba(255,69,58,0.05); }
+    .grasp-card.operational { border-color: rgba(0,230,118,0.5); background: rgba(0,230,118,0.05); }
+    .grasp-rank {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.5px;
+    }
+    .grasp-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 8px; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; font-size: 11px; }
+    .score-label { color: var(--muted); }
+    .score-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .score-bar { width: 50px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+    .grasp-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; margin-top: 10px;
+    }
+    .status-ok { background: rgba(0,230,118,0.15); color: var(--green); }
+    .status-reject { background: rgba(255,69,58,0.15); color: var(--red); }
+    .flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .flag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,214,10,0.15); color: var(--yellow); font-weight: 600; }
+
+    /* ── Summary cards ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 16px; }
+    .stat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .stat-val { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+    /* ── Agent section ── */
+    .agent-result {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; margin-top: 12px;
+    }
+    .agent-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #c084fc; }
+    .agent-text { font-size: 13px; line-height: 1.7; color: var(--text); }
+    .explanation-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); display: flex; gap: 10px; align-items: flex-start; }
+    .explanation-item:last-child { border-bottom: none; }
+    .explanation-num { color: var(--accent); font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+
+    /* ── Tabs ── */
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface2); padding: 4px; border-radius: 10px; }
+    .tab {
+      flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 600;
+      border-radius: 7px; cursor: pointer; transition: all 0.2s; color: var(--muted);
+    }
+    .tab.active { background: var(--surface); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo">
+      <div class="logo-mark">G</div>
+      <div>
+        <h1>GRASP Platform</h1>
+        <span>Grasp Reliability &amp; Safety Platform — Demo Mode</span>
+      </div>
+    </div>
+    <div class="status-pill" id="api-status">API Connecting…</div>
+  </header>
+
+  <div class="grid">
+    <!-- ── Left Panel: Controls ── -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Upload Scene</div>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="depth-file" accept=".npz,.npy,.png" />
+          <div class="upload-icon">📦</div>
+          <p>Drop your <strong>.npz</strong> depth scene here<br/>or click to browse</p>
+          <div id="file-badge" style="display:none" class="file-badge">
+            <span>📄</span><span id="file-name"></span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Jaw Width (mm)</label>
+            <input type="number" id="jaw-width" value="85" min="10" max="300" />
+          </div>
+          <div class="field">
+            <label>Max Aperture (mm)</label>
+            <input type="number" id="max-aperture" value="80" min="10" max="300" />
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="run-btn" onclick="uploadAndRun()">
+          ▶ Upload &amp; Run G-SAFE Pipeline
+        </button>
+
+        <div style="margin-top:12px; display:flex; gap:8px; justify-content:center;">
+          <button class="btn btn-secondary" onclick="useDemoScene()">Use Demo Scene</button>
+          <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+        </div>
+      </div>
+
+      <!-- Health Card -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span class="dot"></span>API Health</div>
+        <div id="health-info" style="font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--muted);">Checking…</div>
+      </div>
+    </div>
+
+    <!-- ── Right Panel: Live Output ── -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Live Pipeline Stream</div>
+
+        <div class="stages" id="stages">
+          <div class="stage-chip" data-stage="depth_repair">Depth Repair</div>
+          <div class="stage-chip" data-stage="pointcloud">Point Cloud</div>
+          <div class="stage-chip" data-stage="segmentation">Segmentation</div>
+          <div class="stage-chip" data-stage="grasp_generation">Grasp Gen</div>
+          <div class="stage-chip" data-stage="audit">Audit</div>
+          <div class="stage-chip" data-stage="novel_modules">Novel Modules</div>
+          <div class="stage-chip" data-stage="agents">Agents</div>
+          <div class="stage-chip" data-stage="complete">Complete</div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="stage-label">Waiting…</span><span id="pct-label">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+        </div>
+
+        <div class="terminal" id="terminal">
+          <div class="log-line"><span class="log-time">00:00:00</span><span class="log-info">GRASP Demo ready. Upload a scene or click "Use Demo Scene" to begin.</span></div>
+        </div>
+      </div>
+
+      <!-- Results section (shown after completion) -->
+      <div class="results-section" id="results-section">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>Pipeline Results</div>
+
+          <div class="stats-row" id="stats-row"></div>
+
+          <div class="tab-bar" style="margin-top:20px;">
+            <div class="tab active" onclick="switchTab('grasps',this)">Top 10 Grasps</div>
+            <div class="tab" onclick="switchTab('agents',this)">Agent Analysis</div>
+            <div class="tab" onclick="switchTab('raw',this)">Raw JSON</div>
+          </div>
+
+          <div class="tab-panel active" id="tab-grasps">
+            <div class="grasps-grid" id="grasps-grid"></div>
+          </div>
+          <div class="tab-panel" id="tab-agents">
+            <div id="agents-output"><p style="color:var(--muted);font-size:13px;">Waiting for Claude agents…</p></div>
+          </div>
+          <div class="tab-panel" id="tab-raw">
+            <pre id="raw-json" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);overflow:auto;max-height:500px;white-space:pre-wrap;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+  let currentJobId = null;
+  let agentData = { summary: null, explanations: null, reranking: null };
+
+  // ── Utilities ───────────────────────────────────────────────────────────────
+  function ts() {
+    return new Date().toTimeString().split(' ')[0];
+  }
+
+  function log(msg, type = 'info') {
+    const t = document.getElementById('terminal');
+    const div = document.createElement('div');
+    div.className = 'log-line';
+    div.innerHTML = `<span class="log-time">${ts()}</span><span class="log-${type}">${msg}</span>`;
+    t.appendChild(div);
+    t.scrollTop = t.scrollHeight;
+  }
+
+  function setProgress(stage, pct) {
+    document.getElementById('stage-label').textContent = stage.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    document.getElementById('pct-label').textContent = pct + '%';
+    document.getElementById('prog-fill').style.width = pct + '%';
+
+    // Update stage chips
+    document.querySelectorAll('.stage-chip').forEach(chip => {
+      const s = chip.dataset.stage;
+      chip.classList.remove('active','done');
+      if (s === stage) chip.classList.add('active');
+    });
+    if (pct === 100) {
+      document.querySelectorAll('.stage-chip').forEach(c => { c.classList.remove('active'); c.classList.add('done'); });
+    }
+  }
+
+  function scoreColor(v) {
+    if (v > 0.6) return 'var(--red)';
+    if (v > 0.35) return 'var(--yellow)';
+    return 'var(--green)';
+  }
+
+  // ── Health check ─────────────────────────────────────────────────────────
+  async function checkHealth() {
+    try {
+      const res = await fetch(`${API}/health`);
+      const d = await res.json();
+      document.getElementById('api-status').textContent = '● API Online';
+      document.getElementById('api-status').style.color = 'var(--green)';
+      document.getElementById('health-info').innerHTML = `
+        <div style="display:grid;gap:4px">
+          <div>Version: <span style="color:var(--text)">${d.version}</span></div>
+          <div>Demo Mode: <span style="color:${d.demo_mode?'var(--yellow)':'var(--green)'}">${d.demo_mode}</span></div>
+          <div>Supabase: <span style="color:${d.supabase_connected?'var(--green)':'var(--red)'}">${d.supabase_connected ? 'Connected' : 'Offline'}</span></div>
+          <div>Redis: <span style="color:${d.redis_connected?'var(--green)':'var(--red)'}">${d.redis_connected ? 'Connected' : 'Offline'}</span></div>
+        </div>`;
+    } catch(e) {
+      document.getElementById('api-status').innerHTML = '● API Offline';
+      document.getElementById('api-status').style.color = 'var(--red)';
+      document.getElementById('health-info').innerHTML = `<span style="color:var(--red)">Cannot reach ${API} — is uvicorn running?</span>`;
+    }
+  }
+
+  // ── File input ────────────────────────────────────────────────────────────
+  document.getElementById('depth-file').addEventListener('change', function() {
+    if (this.files[0]) {
+      document.getElementById('file-name').textContent = this.files[0].name;
+      document.getElementById('file-badge').style.display = 'inline-flex';
+    }
+  });
+  const zone = document.getElementById('upload-zone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) { document.getElementById('depth-file').files = e.dataTransfer.files; document.getElementById('file-name').textContent = f.name; document.getElementById('file-badge').style.display='inline-flex'; }
+  });
+
+  // ── Demo Scene without file upload ──────────────────────────────────────
+  async function useDemoScene() {
+    log('Using demo scene — skipping real file upload.', 'info');
+    document.getElementById('file-name').textContent = 'demo_cluttered.npz';
+    document.getElementById('file-badge').style.display = 'inline-flex';
+    await triggerAnalysis('demo_scene_' + Date.now());
+  }
+
+  // ── Upload flow ──────────────────────────────────────────────────────────
+  async function uploadAndRun() {
+    const file = document.getElementById('depth-file').files[0];
+    if (!file) { log('Please select a .npz file first.', 'warn'); return; }
+
+    document.getElementById('run-btn').disabled = true;
+    document.getElementById('results-section').classList.remove('show');
+    log(`Uploading ${file.name}…`, 'info');
+
+    const fd = new FormData();
+    fd.append('depth', file);
+    fd.append('jaw_width_mm', document.getElementById('jaw-width').value);
+    fd.append('max_aperture_mm', document.getElementById('max-aperture').value);
+
+    try {
+      const res = await fetch(`${API}/v1/scenes/upload`, { method: 'POST', body: fd });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.detail || JSON.stringify(d));
+      log(`✓ Scene uploaded: ${d.scene_id.slice(0,8)}…`, 'success');
+      await triggerAnalysis(d.scene_id);
+    } catch(e) {
+      log(`Upload failed: ${e.message}`, 'error');
+      document.getElementById('run-btn').disabled = false;
+    }
+  }
+
+  // ── Trigger analysis and stream ──────────────────────────────────────────
+  async function triggerAnalysis(scene_id) {
+    log('Starting G-SAFE inference pipeline…', 'info');
+    setProgress('queued', 0);
+
+    try {
+      const res = await fetch(`${API}/v1/analysis/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scene_id, config: { enable_tda: false, enable_sim: false, top_n: 10 } })
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.detail || JSON.stringify(d));
+      currentJobId = d.job_id;
+      log(`Job created: ${d.job_id.slice(0,8)}…  |  Streaming…`, 'info');
+      streamResults(d.job_id);
+    } catch(e) {
+      log(`Analysis failed: ${e.message}`, 'error');
+      document.getElementById('run-btn').disabled = false;
+    }
+  }
+
+  // ── SSE streaming ─────────────────────────────────────────────────────────
+  function streamResults(job_id) {
+    const evtSrc = new EventSource(`${API}/v1/analysis/${job_id}/stream`);
+    agentData = { summary: null, explanations: null, reranking: null };
+
+    evtSrc.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      handleEvent(msg);
+    };
+    evtSrc.onerror = () => {
+      log('SSE connection closed.', 'warn');
+      evtSrc.close();
+      document.getElementById('run-btn').disabled = false;
+    };
+  }
+
+  function handleEvent(msg) {
+    switch(msg.type) {
+      case 'connected':
+        log(`Connected to stream for job ${msg.job_id.slice(0,8)}`, 'info'); break;
+      case 'progress':
+        setProgress(msg.stage, msg.progress);
+        log(`[${msg.progress}%] Stage: ${msg.stage}`, 'info'); break;
+      case 'complete':
+        log('✓ Pipeline complete! Rendering results…', 'success');
+        renderResults(msg.result); break;
+      case 'agent_start':
+        log('🤖 Claude agents activating…', 'agent'); break;
+      case 'scene_summary':
+        agentData.summary = msg.content;
+        log('🤖 Scene summary received.', 'agent');
+        renderAgents(); break;
+      case 'explanations':
+        agentData.explanations = msg.content;
+        log('🤖 Grasp explanations received.', 'agent');
+        renderAgents(); break;
+      case 'reranking':
+        agentData.reranking = msg.content;
+        log('🤖 Safety re-ranking received.', 'agent');
+        renderAgents(); break;
+      case 'agents_complete':
+        log('✓ All agents complete!', 'success');
+        document.getElementById('run-btn').disabled = false; break;
+      case 'error':
+        log(`Error: ${msg.message}`, 'error');
+        document.getElementById('run-btn').disabled = false; break;
+    }
+  }
+
+  // ── Render result cards ───────────────────────────────────────────────────
+  function renderResults(plan) {
+    document.getElementById('results-section').classList.add('show');
+    document.getElementById('raw-json').textContent = JSON.stringify(plan, null, 2);
+
+    // Stats
+    const grasps = plan.top_10_grasps || [];
+    const rejected = grasps.filter(g => g.rejected).length;
+    const avgSafe = grasps.length ? (grasps.reduce((s,g) => s + (g.audit?.g_safe||0), 0)/grasps.length).toFixed(3) : '–';
+    document.getElementById('stats-row').innerHTML = `
+      <div class="stat-card"><div class="stat-val">${grasps.length}</div><div class="stat-label">Grasps Ranked</div></div>
+      <div class="stat-card"><div class="stat-val">${grasps.length - rejected}</div><div class="stat-label">Operational</div></div>
+      <div class="stat-card"><div class="stat-val">${rejected}</div><div class="stat-label">Rejected</div></div>
+      <div class="stat-card"><div class="stat-val">${avgSafe}</div><div class="stat-label">Avg G-SAFE</div></div>`;
+
+    // Grasp cards
+    const grid = document.getElementById('grasps-grid');
+    grid.innerHTML = '';
+    grasps.forEach(g => {
+      const a = g.audit || {};
+      const isOp = g.is_operational;
+      const flags = (a.flags || []).map(f => `<span class="flag">${f}</span>`).join('');
+      const scores = ['s','c','o','r','k'].map(k => {
+        const v = a[k+'_score'] !== undefined ? a[k+'_score'] : a[k];
+        const vf = typeof v==='number' ? v.toFixed(3) : '–';
+        const w = typeof v==='number' ? Math.round(v*100) : 0;
+        return `<div class="score-row">
+          <span class="score-label">Type-${k.toUpperCase()}</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="score-bar"><div class="score-bar-fill" style="width:${w}%;background:${scoreColor(v)}"></div></div>
+            <span class="score-val" style="color:${scoreColor(v)}">${vf}</span>
+          </div></div>`;
+      }).join('');
+
+      const card = document.createElement('div');
+      card.className = 'grasp-card' + (g.rejected ? ' rejected' : isOp ? ' operational' : '');
+      card.innerHTML = `
+        <div class="grasp-rank">#${g.rank}</div>
+        <div class="grasp-id">${g.grasp?.grasp_id || 'g?'}</div>
+        ${scores}
+        <div class="score-row"><span class="score-label" style="font-weight:700">G-SAFE</span><span class="score-val" style="color:var(--accent2)">${typeof a.g_safe==='number'?a.g_safe.toFixed(3):'–'}</span></div>
+        <div class="grasp-status ${g.rejected?'status-reject':'status-ok'}">${g.rejected ? '✕ Rejected' : isOp ? '✓ Operational' : '✓ Safe'}</div>
+        ${flags ? '<div class="flags">'+flags+'</div>' : ''}
+        ${g.sim_validated !== null ? `<div style="font-size:10px;color:var(--muted);margin-top:6px">PyBullet: ${g.sim_validated ? '✓' : '✗'}</div>` : ''}`;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderAgents() {
+    const container = document.getElementById('agents-output');
+    let html = '';
+
+    if (agentData.summary) {
+      html += `<div class="agent-result">
+        <div class="agent-header">🧠 Scene Summary</div>
+        <div class="agent-text">${agentData.summary}</div>
+      </div>`;
+    }
+    if (agentData.explanations && Array.isArray(agentData.explanations)) {
+      html += `<div class="agent-result"><div class="agent-header">💬 Grasp Explanations</div>`;
+      agentData.explanations.forEach((ex, i) => {
+        html += `<div class="explanation-item"><span class="explanation-num">#${i+1}</span><span>${ex}</span></div>`;
+      });
+      html += '</div>';
+    }
+    if (agentData.reranking && Array.isArray(agentData.reranking)) {
+      html += `<div class="agent-result"><div class="agent-header">📊 Safety Re-Ranking</div>`;
+      agentData.reranking.forEach(r => {
+        html += `<div class="explanation-item"><span class="explanation-num">#${r.rank}</span><span>${r.grasp_id} — ${r.reasoning || ''}</span></div>`;
+      });
+      html += '</div>';
+    }
+    if (!html) {
+      html = '<p style="color:var(--muted);font-size:13px">Waiting for Claude agents…</p>';
+    }
+    container.innerHTML = html;
+  }
+
+  // ── Tabs ─────────────────────────────────────────────────────────────────
+  function switchTab(name, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  function clearAll() {
+    document.getElementById('terminal').innerHTML = '<div class="log-line"><span class="log-time">--:--:--</span><span class="log-info">Cleared.</span></div>';
+    document.getElementById('results-section').classList.remove('show');
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('stage-label').textContent = 'Waiting…';
+    document.getElementById('pct-label').textContent = '0%';
+    document.getElementById('file-badge').style.display = 'none';
+    document.getElementById('run-btn').disabled = false;
+    document.querySelectorAll('.stage-chip').forEach(c => c.classList.remove('active','done'));
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  checkHealth();
+  setInterval(checkHealth, 15000);
+</script>
+</body>
+</html>
