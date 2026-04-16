@@ -1,7 +1,11 @@
--- ============================================================
--- GRASP Platform — Initial Schema Migration
--- 001_initial.sql
--- ============================================================
+-- Clean up existing tables to prevent 'relation already exists' errors
+DROP TABLE IF EXISTS usage_records CASCADE;
+DROP TABLE IF EXISTS analysis_jobs CASCADE;
+DROP TABLE IF EXISTS scenes CASCADE;
+DROP TABLE IF EXISTS api_keys CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS organizations CASCADE;
+DROP TABLE IF EXISTS webhooks CASCADE;
 
 -- Organizations (multi-tenant root)
 CREATE TABLE organizations (
