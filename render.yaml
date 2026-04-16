@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: grasp-api
+    runtime: docker
+    dockerContext: .
+    dockerfile: apps/api/Dockerfile
+    plan: free
+    region: ohio
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        value: https://gycvhkawzymfebrceoqi.supabase.co
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SLACK_WEBHOOK_URL
+        sync: false
+      - key: MODAL_TOKEN_ID
+        sync: false
+      - key: MODAL_TOKEN_SECRET
+        sync: false
+      - key: DEMO_MODE
+        value: "false"
+      - key: ALLOWED_ORIGINS
+        value: "https://*.vercel.app,http://localhost:3000"

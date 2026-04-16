@@ -1,4 +1,4 @@
-export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000') + '/v1';
+export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'https://grasp-api.onrender.com') + '/v1';
 
 export async function uploadScene(file: File, jawWidth: number, maxAperture: number) {
   const fd = new FormData();
