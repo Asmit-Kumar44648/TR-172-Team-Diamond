@@ -53,6 +53,7 @@ export interface ScenePlan {
   scene_id: string;
   job_id: string;
   timestamp: string;
+  scene_summary?: string;
   inference_time_seconds: number;
   collision_free_ratio: number;
   collision_free_count: number;
