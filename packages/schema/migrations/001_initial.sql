@@ -9,9 +9,7 @@ CREATE TABLE organizations (
   name TEXT NOT NULL,
   plan TEXT NOT NULL DEFAULT 'free'
     CHECK (plan IN ('free','starter','pro','enterprise')),
-  stripe_customer_id TEXT,
-  stripe_subscription_id TEXT,
-  daily_quota INTEGER NOT NULL DEFAULT 5,
+  daily_quota INTEGER NOT NULL DEFAULT 1000,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

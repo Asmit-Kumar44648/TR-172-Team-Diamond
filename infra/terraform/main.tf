@@ -67,8 +67,7 @@ resource "google_storage_bucket" "results" {
 # 3. Secret Manager Setup (Names only)
 resource "google_secret_manager_secret" "secrets" {
   for_each = toset([
-    "anthropic-key", "db-url", "redis-url", "supabase-key", 
-    "stripe-key", "stripe-webhook"
+    "anthropic-key", "db-url", "redis-url", "supabase-key", "resend-key", "slack-webhook"
   ])
   secret_id = each.key
   replication {
