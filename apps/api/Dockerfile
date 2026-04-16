@@ -13,9 +13,9 @@ RUN apt-get update && apt-get install -y \
 COPY apps/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy API files and Schema files (assumes standard Turborepo root context)
-COPY apps/api/ .
-COPY packages/schema/ ./schema/
+# Copy the whole monorepo context to maintain import paths
+COPY apps/api/ apps/api/
+COPY packages/ packages/
 
 EXPOSE 8000
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
+CMD ["sh", "-c", "python -m uvicorn apps.api.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
