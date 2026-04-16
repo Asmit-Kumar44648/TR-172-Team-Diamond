@@ -67,8 +67,6 @@ GRASP is a production SaaS platform for robotics engineers to audit robot grasps
 | `SUPABASE_SERVICE_KEY` | Supabase service role key (server-side) |
 | `SUPABASE_ANON_KEY` | Supabase anon key (client-side) |
 | `ANTHROPIC_API_KEY` | Claude API for agent reasoning |
-| `STRIPE_SECRET_KEY` | Stripe billing |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification |
 | `MODAL_TOKEN_ID` | Modal.com GPU worker token |
 | `MODAL_TOKEN_SECRET` | Modal.com GPU worker secret |
 | `GCS_BUCKET_SCENES` | GCS bucket — uploaded scene files |

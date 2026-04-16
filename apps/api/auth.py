@@ -63,12 +63,7 @@ def get_current_org(
             user_id = claims.get("sub")
             org_id = claims.get("org_id") or claims.get("app_metadata", {}).get("org_id")
 
-            if supabase and org_id:
-                resp = supabase.table("organizations").select("plan, daily_quota").eq("id", org_id).single().execute()
-                plan = resp.data["plan"] if resp.data else "free"
-                daily_quota = resp.data["daily_quota"] if resp.data else 5
-            else:
-                plan, daily_quota = "pro", 500
+            plan, daily_quota = "free", 1000
 
             return {"org_id": org_id or "unknown", "user_id": user_id,
                     "plan": plan, "daily_quota": daily_quota, "auth_method": "jwt"}
@@ -86,7 +81,7 @@ def get_current_org(
 
         key_hash = hashlib.sha256(api_key_header.encode()).hexdigest()
         resp = supabase.table("api_keys").select(
-            "id, org_id, organizations(plan, daily_quota)"
+            "id, org_id"
         ).eq("key_hash", key_hash).is_("revoked_at", "null").single().execute()
 
         if not resp.data:
@@ -100,8 +95,8 @@ def get_current_org(
         return {
             "org_id": resp.data["org_id"],
             "api_key_id": key_id,
-            "plan": resp.data["organizations"]["plan"],
-            "daily_quota": resp.data["organizations"]["daily_quota"],
+            "plan": "free",
+            "daily_quota": 1000,
             "auth_method": "api_key",
         }
 
