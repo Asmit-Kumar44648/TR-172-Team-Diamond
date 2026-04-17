@@ -24,6 +24,6 @@ services:
       - key: MODAL_TOKEN_SECRET
         sync: false
       - key: DEMO_MODE
-        value: "false"
+        value: "true"
       - key: ALLOWED_ORIGINS
         value: "https://*.vercel.app,http://localhost:3000"
