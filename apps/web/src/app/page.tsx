@@ -26,7 +26,7 @@ export default function LandingPage() {
             <Button size="lg" className="px-10 h-12 text-base font-medium">Use Platform — It's Free</Button>
           </Link>
           <Link href="/app/docs">
-            <Button size="lg" variant="outline" className="px-10 h-12 text-base border-zinc-200">Read the Paper</Button>
+            <Button size="lg" variant="outline" className="px-10 h-12 text-base border-border">Read the Paper</Button>
           </Link>
         </div>
 
@@ -58,52 +58,52 @@ export default function LandingPage() {
         </div>
 
         {/* Comparison Section (G-SAFE Taxonomy) */}
-        <div className="w-full max-w-4xl mt-32 bg-zinc-50 rounded-2xl p-12 text-left border border-zinc-100">
+        <div className="w-full max-w-4xl mt-32 bg-surfaceElevated rounded-2xl p-12 text-left border border-border">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
               <div>
-                 <h3 className="text-2xl font-bold text-zinc-900 mb-4">How we compare</h3>
-                 <p className="text-zinc-500 leading-relaxed">Traditional models like AnyGrasp or Contact-GraspNet focus on "Success Probability." We focus on **"Consequence of Failure."**</p>
+                 <h3 className="text-2xl font-bold text-foreground mb-4">How we compare</h3>
+                 <p className="text-muted-foreground leading-relaxed">Traditional models like AnyGrasp or Contact-GraspNet focus on "Success Probability." We focus on **"Consequence of Failure."**</p>
                  <div className="mt-8 space-y-4">
                     <div className="flex gap-4">
-                       <div className="font-bold text-accent">S</div>
-                       <div><span className="font-semibold text-zinc-800">Slip Risk:</span> Surface normal vs approach alignment.</div>
+                       <div className="font-bold text-primary">S</div>
+                       <div><span className="font-semibold text-zinc-300">Slip Risk:</span> Surface normal vs approach alignment.</div>
                     </div>
                     <div className="flex gap-4">
-                       <div className="font-bold text-accent">C</div>
-                       <div><span className="font-semibold text-zinc-800">Collision:</span> AABB intersection with clutter pointclouds.</div>
+                       <div className="font-bold text-primary">C</div>
+                       <div><span className="font-semibold text-zinc-300">Collision:</span> AABB intersection with clutter pointclouds.</div>
                     </div>
                     <div className="flex gap-4">
-                       <div className="font-bold text-accent">O</div>
-                       <div><span className="font-semibold text-zinc-800">Observation:</span> Depth repair uncertainty & camera noise.</div>
+                       <div className="font-bold text-primary">O</div>
+                       <div><span className="font-semibold text-zinc-300">Observation:</span> Depth repair uncertainty & camera noise.</div>
                     </div>
                     <div className="flex gap-4">
-                       <div className="font-bold text-accent">K</div>
-                       <div><span className="font-semibold text-zinc-800">Cascade:</span> Probability of the entire scene toppling.</div>
+                       <div className="font-bold text-primary">K</div>
+                       <div><span className="font-semibold text-zinc-300">Cascade:</span> Probability of the entire scene toppling.</div>
                     </div>
                  </div>
               </div>
               
               <div className="flex flex-col justify-center">
-                 <div className="rounded-xl border border-zinc-200 overflow-hidden bg-white shadow-sm font-mono text-sm">
-                    <div className="grid grid-cols-3 border-b border-zinc-100 p-4 bg-zinc-50/50 text-zinc-400 text-xs font-bold uppercase tracking-wider">
+                 <div className="rounded-xl border border-border overflow-hidden bg-surface shadow-sm font-mono text-sm">
+                    <div className="grid grid-cols-3 border-b border-border p-4 bg-zinc-900/50 text-zinc-400 text-xs font-bold uppercase tracking-wider">
                        <div>Metric</div>
                        <div>Contact-GN</div>
                        <div>GRASP</div>
                     </div>
-                    <div className="grid grid-cols-3 border-b border-zinc-100 p-4">
+                    <div className="grid grid-cols-3 border-b border-border p-4">
                        <div className="text-zinc-400">Seen AP</div>
                        <div className="text-zinc-500">69.9%</div>
-                       <div className="text-zinc-900 font-bold">73.6%</div>
+                       <div className="text-foreground font-bold">73.6%</div>
                     </div>
-                    <div className="grid grid-cols-3 border-b border-zinc-100 p-4">
+                    <div className="grid grid-cols-3 border-b border-border p-4">
                        <div className="text-zinc-400">Unseen AP</div>
                        <div className="text-zinc-500">60.1%</div>
-                       <div className="text-zinc-900 font-bold">63.4%</div>
+                       <div className="text-foreground font-bold">63.4%</div>
                     </div>
                     <div className="grid grid-cols-3 p-4">
                        <div className="text-zinc-400">Safety Gate</div>
                        <div className="text-red-500">No Audit</div>
-                       <div className="text-accent font-bold">G-SAFE</div>
+                       <div className="text-primary font-bold">G-SAFE</div>
                     </div>
                  </div>
               </div>

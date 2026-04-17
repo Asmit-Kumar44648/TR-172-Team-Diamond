@@ -32,14 +32,20 @@ app.add_middleware(MonitoringMiddleware)
 
 # 2. CORS — allow all in dev/demo mode so the local demo.html can call the API
 DEMO_MODE = os.environ.get("DEMO_MODE", "true").lower() == "true"
-ALLOWED_ORIGINS = ["*"] if DEMO_MODE else os.environ.get(
-    "ALLOWED_ORIGINS", "https://app.grasp.ai,http://localhost:3000"
-).split(",")
+# Support dynamic Vercel URLs and local dev
+ALLOWED_ORIGINS = ["*"] if DEMO_MODE else [
+    o for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o
+] + [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://*.vercel.app"  # Regex or exact match? (FastAPI CORSMiddleware doesn't do wildcards in the list, but we can do allow_origin_regex)
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=not DEMO_MODE,  # credentials can't be used with wildcard
+    allow_origins=ALLOWED_ORIGINS if "*" not in ALLOWED_ORIGINS else ["*"],
+    allow_origin_regex=os.environ.get("ALLOWED_ORIGIN_REGEX", "https://.*\.vercel\.app"),
+    allow_credentials=not ("*" in ALLOWED_ORIGINS),
     allow_methods=["*"],
     allow_headers=["*"],
 )

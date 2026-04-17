@@ -17,21 +17,21 @@ const config: Config = {
     },
     extend: {
       colors: {
-        background: "#ffffff",
-        foreground: "#18181b", // zinc-900
-        surface: "#fafafa",    // zinc-50
-        surfaceElevated: "#f4f4f5", // zinc-100
-        border: "rgba(228, 228, 231, 0.8)", // zinc-200
+        background: "#000000",
+        foreground: "#ffffff",
+        surface: "#09090b",    // zinc-950
+        surfaceElevated: "#18181b", // zinc-900
+        border: "rgba(255, 255, 255, 0.1)",
         accent: {
-          DEFAULT: "#f59e0b", // amber-500
-          hover: "#d97706",   // amber-600
+          DEFAULT: "#ffffff",
+          hover: "#e4e4e7",   // zinc-200
         },
-        success: "#10b981", // emerald-500
-        danger: "#ef4444",
-        warning: "#f59e0b",
+        success: "#ffffff", // Pure white for success in noir
+        danger: "#ff0000",  // Keep red for high-contrast danger
+        warning: "#ffffff", // Use white for warning too
         muted: {
-          DEFAULT: "#f4f4f5",
-          foreground: "#71717a", // zinc-500
+          DEFAULT: "#18181b",
+          foreground: "#52525b", // zinc-400
         },
       },
       borderRadius: {
