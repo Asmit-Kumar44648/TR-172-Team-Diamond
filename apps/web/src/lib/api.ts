@@ -1,5 +1,7 @@
-// Force API connection to Render backend to bypass Vercel env misconfigurations
-export const API_BASE = 'https://grasp-api.onrender.com/v1';
+// The user must paste the correct Render dashboard URL into Vercel as NEXT_PUBLIC_API_URL.
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'https://tr-172-team-diamond.onrender.com';
+const cleanUrl = rawUrl.replace(/\/+$/, '').replace(/\/v1$/, '');
+export const API_BASE = `${cleanUrl}/v1`;
 
 export async function uploadScene(file: File, jawWidth: number, maxAperture: number) {
   const fd = new FormData();
