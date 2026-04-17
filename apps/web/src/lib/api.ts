@@ -1,4 +1,5 @@
-export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'https://grasp-api.onrender.com') + '/v1';
+// Force API connection to Render backend to bypass Vercel env misconfigurations
+export const API_BASE = 'https://grasp-api.onrender.com/v1';
 
 export async function uploadScene(file: File, jawWidth: number, maxAperture: number) {
   const fd = new FormData();
