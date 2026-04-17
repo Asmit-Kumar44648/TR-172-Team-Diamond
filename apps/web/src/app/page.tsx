@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center pt-32 pb-16 px-6">
