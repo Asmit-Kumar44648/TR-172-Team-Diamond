@@ -57,6 +57,10 @@ app.include_router(export.router)
 app.include_router(keys.router)
 app.include_router(webhooks.router)
 
+@app.get("/")
+async def root():
+    return {"message": "GRASP API is running. See /health for status or /docs for API documentation."}
+
 @app.get("/health")
 async def health_check():
     from apps.api.auth import supabase
